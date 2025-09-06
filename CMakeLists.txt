@@ -38,24 +38,33 @@ set(VENDORED_DIR "${CMAKE_CURRENT_LIST_DIR}/vendored")
 # Set resources directory.
 set(RESOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/resources")
 
-# Set source directory.
+# Set unified source directory
 set(SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/source")
 
 # Create the executable target.
 add_executable(${EXECUTABLE_NAME})
 
-# Automatically add all .cpp, .h, and .hpp files from the source directory
+# Collect all source files from the unified source directory
 file(GLOB_RECURSE PROJECT_SOURCES
     "${SOURCE_DIR}/*.cpp"
     "${SOURCE_DIR}/*.h"
     "${SOURCE_DIR}/*.hpp"
 )
 
+# Add all source files to the target
 target_sources(${EXECUTABLE_NAME} PRIVATE ${PROJECT_SOURCES})
+
+# Add all include directories
+target_include_directories(${EXECUTABLE_NAME} PRIVATE "${CMAKE_CURRENT_LIST_DIR}/include")
 
 # Add logo for Apple executable.
 if(APPLE)
-    target_sources("${EXECUTABLE_NAME}" PRIVATE "${RESOURCE_DIR}/Logo.png")
+    target_sources("${EXECUTABLE_NAME}" PRIVATE "${RESOURCE_DIR}/textures/Logo.png")
+endif()
+
+# Add icon for Windows executable
+if(WIN32)
+    target_sources("${EXECUTABLE_NAME}" PRIVATE "${CMAKE_CURRENT_LIST_DIR}/config/windows/app.rc")
 endif()
 
 # Set C++ version
@@ -120,11 +129,11 @@ if (APPLE)
     endforeach()
 else()
     # Recursively copy the entire resources directory to the output directory after build
+    # First remove existing resources to clear old files, then copy fresh ones
     add_custom_command(
         TARGET ${EXECUTABLE_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-            "${RESOURCE_DIR}"
-            "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/resources"
+        COMMAND ${CMAKE_COMMAND} -E remove_directory "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/resources"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory "${RESOURCE_DIR}" "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/resources"
     )
 endif()
 
@@ -135,7 +144,7 @@ set_target_properties(${EXECUTABLE_NAME} PROPERTIES
     MACOSX_BUNDLE TRUE
 
     # Set the Info.plist file for Apple Mobile platforms. Without this file, app will not launch. 
-    MACOSX_BUNDLE_INFO_PLIST "${SOURCE_DIR}/Info.plist.in"
+    MACOSX_BUNDLE_INFO_PLIST "${SOURCE_DIR}/SDLE/Info.plist.in"
 
     # in Xcode, create a Scheme in the schemes dropdown for the app.
     XCODE_GENERATE_SCHEME TRUE

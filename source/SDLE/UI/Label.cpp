@@ -1,6 +1,13 @@
 #include "SDLE/UI/Label.h"
 #include "SDLE/UI/UI.h"
 
+Label::Label()
+{
+	this->font = nullptr;
+	this->text = nullptr;
+	this->content = "";
+}
+
 Label::Label(TTF_Font* font, const std::string& content)
 {
 	this->font = font;
@@ -73,5 +80,8 @@ void Label::SetText(const std::string& content)
 
 void Label::Render(float x, float y)
 {
-    TTF_DrawRendererText(text, x, y);
+	if (!text)
+		return;
+
+	TTF_DrawRendererText(text, x, y);
 }

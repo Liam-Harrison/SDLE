@@ -7,13 +7,10 @@ bool UI::Initialize()
 {
 	if (s_textEngine == nullptr)
 	{
-		s_textEngine = TTF_CreateGPUTextEngine(Context.gpu);
+		s_textEngine = TTF_CreateRendererTextEngine(SDLE::Context.renderer);
 
 		if (s_textEngine == nullptr)
-		{
-			SDL_LogError(SDL_LOG_CATEGORY_CUSTOM, "Failed to create text engine: %s", SDL_GetError());
 			return false;
-		}
 	}
 
 	return true;

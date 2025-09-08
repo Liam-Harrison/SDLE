@@ -10,3 +10,6 @@
 [submodule "vendored/SDL_mixer"]
 	path = vendored/SDL_mixer
 	url = https://github.com/libsdl-org/SDL_mixer.git
+[submodule "vendored/RmlUi"]
+	path = vendored/RmlUi
+	url = https://github.com/mikke89/RmlUi.git

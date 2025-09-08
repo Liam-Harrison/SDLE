@@ -97,12 +97,18 @@ set(SDLIMAGE_JPEG OFF)
 set(SDLIMAGE_WEBP OFF)
 add_subdirectory(${VENDORED_DIR}/SDL_image EXCLUDE_FROM_ALL)
 
-# Link SDL. This also makes its include directory available to us. 
+# RmlUi
+set(RMLUI_BACKEND "SDL_SDLrenderer")
+add_subdirectory(${VENDORED_DIR}/RmlUi EXCLUDE_FROM_ALL)
+
+# Link SDL and RmlUi. This also makes their include directories available to us. 
 target_link_libraries(${EXECUTABLE_NAME} PUBLIC 
 	SDL3_ttf::SDL3_ttf
 	SDL3_mixer::SDL3_mixer
     SDL3_image::SDL3_image
     SDL3::SDL3
+    RmlUi::Core
+    RmlUi::Debugger
 )
 
 # SDL_Image bug: https://github.com/libsdl-org/SDL_image/issues/506

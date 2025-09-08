@@ -6,6 +6,8 @@
 #include <SDL3_mixer/SDL_mixer.h>
 #include <SDL3_image/SDL_image.h>
 
+#define RMLUI_SDL_VERSION_MAJOR 3
+
 struct AppContext
 {
 	SDL_Window* window = nullptr;

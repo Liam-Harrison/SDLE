@@ -1,10 +1,11 @@
 ﻿#define SDL_MAIN_USE_CALLBACKS 1
 
-#include <SDL3/SDL_main.h>
 #include "SDLE/SDLE.h"
 #include "SDLE/UI/UI.h"
 #include "SDLE/Assets.h"
 #include "SDLE/UI/Label.h"
+#include "SDLE/RmlUI.h"
+#include <SDL3/SDL_main.h>
 #include <vector>
 #include <map>
 
@@ -69,6 +70,9 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
 	if (!UI::Initialize())
 		return SDL_Fail();
 
+	if (!RmlUIIntegration::Initialize(SDLE::Context.window, SDLE::Context.renderer))
+		return SDL_Fail();
+
 	TTF_Font* font = nullptr;
 
 	if (!Assets::TryLoadFont(FONT, 16, &font))
@@ -85,6 +89,8 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
 {
     if (event->type == SDL_EVENT_QUIT)
 		SDLE::Context.app_state = SDL_APP_SUCCESS;
+
+	RmlUIIntegration::ProcessEvent(*event, SDLE::Context.window);
 
     return SDL_APP_CONTINUE;
 }
@@ -118,6 +124,9 @@ SDL_AppResult SDL_AppIterate(void* appstate)
 	label.SetText("Time: {:.2f} FPS: {:.0f}", now, avgFPS);
 	label.Render(0, 0);
 
+	RmlUIIntegration::Update();
+	RmlUIIntegration::Render();
+
     SDL_RenderPresent(SDLE::Context.renderer);
 
 	lastNS = SDL_GetTicksNS();
@@ -127,6 +136,7 @@ SDL_AppResult SDL_AppIterate(void* appstate)
 
 void SDL_AppQuit(void* appstate, SDL_AppResult result)
 {
+	RmlUIIntegration::Cleanup();
 	UI::Cleanup();
 
 	SDL_DestroyRenderer(SDLE::Context.renderer);
